@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using miliostore.Model;
 using miliostore.Service;
 
 namespace miliostore.Controller
 {
+    [Authorize]
     [Route("~/categorias")]
     [ApiController]
     public class CategoriaController : ControllerBase

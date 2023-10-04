@@ -35,11 +35,20 @@ namespace miliostore.Data
         {
             modelBuilder.Entity<Produto>().ToTable("tb_produtos");
             modelBuilder.Entity<Categoria>().ToTable("tb_categorias");
+            modelBuilder.Entity<User>().ToTable("tb_usuarios");
 
+            // Relacionamento Produto -> Categoria
             _ = modelBuilder.Entity<Produto>()
                 .HasOne(_ => _.Categoria)
                 .WithMany(t => t.Produto)
                 .HasForeignKey("CategoriaId")
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relacionamento Postagem -> User
+            _ = modelBuilder.Entity<Produto>()
+                .HasOne(_ => _.Usuario)
+                .WithMany(u => u.Produto)
+                .HasForeignKey("UserId")
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
@@ -48,5 +57,7 @@ namespace miliostore.Data
         public DbSet<Produto> Produtos { get; set; } = null!;
 
         public DbSet<Categoria> Categorias { get; set; } = null!;
+
+        public DbSet<User> Users { get; set; } = null!;
     }
 }

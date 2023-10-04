@@ -3,9 +3,14 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using miliostore.Data;
 using miliostore.Model;
+using miliostore.Security.Implements;
+using miliostore.Security;
 using miliostore.Service;
 using miliostore.Service.Implements;
 using miliostore.Validator;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace miliostore
 {
@@ -22,6 +27,7 @@ namespace miliostore
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                 }
             );
 
@@ -36,10 +42,33 @@ namespace miliostore
             // Validação das Entidades
             builder.Services.AddTransient<IValidator<Produto>, ProdutoValidator>();
             builder.Services.AddTransient<IValidator<Categoria>, CategoriaValidator>();
+            builder.Services.AddTransient<IValidator<User>, UserValidator>();
 
             // Registrar as Classes e Interfaces Service
             builder.Services.AddScoped<IProdutoService, ProdutoService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
+
+            // Adicionar a Validação do Token JWT
+
+            builder.Services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                var Key = Encoding.UTF8.GetBytes(Settings.Secret);
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Key)
+                };
+            });
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -74,6 +103,9 @@ namespace miliostore
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            // Habilitar a Autenticação e a Autorização
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

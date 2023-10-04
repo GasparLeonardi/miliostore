@@ -9,17 +9,14 @@ namespace miliostore.Validator
         {
             RuleFor(p => p.Nome)
                 .NotEmpty()
-                .MinimumLength(5)
                 .MaximumLength(100);
             
             RuleFor(p => p.Descricao)
                 .NotEmpty()
-                .MinimumLength(5)
                 .MaximumLength(1000);
 
             RuleFor(p => p.Console)
                 .NotEmpty()
-                .MinimumLength(5)
                 .MaximumLength(100);
 
             RuleFor(p => p.DataLancamento)
@@ -27,7 +24,6 @@ namespace miliostore.Validator
 
             RuleFor(p => p.Foto)
                 .NotEmpty()
-                .MinimumLength(5)
                 .MaximumLength(2000);
 
         }

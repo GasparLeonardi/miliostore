@@ -18,6 +18,7 @@ namespace miliostore.Service.Implements
         {
             return await _context.Produtos
                 .Include(p => p.Categoria)
+                .Include(p => p.Usuario)
                 .ToListAsync();
         }
         
@@ -26,6 +27,7 @@ namespace miliostore.Service.Implements
             try
             {
                 var Produto = await _context.Produtos
+                    .Include(p => p.Usuario)
                     .Include(p => p.Categoria)
                     .FirstAsync(i => i.Id == id);
                 return Produto;
@@ -38,6 +40,7 @@ namespace miliostore.Service.Implements
         public async Task<IEnumerable<Produto>> GetByNome(string nome)
         {
             var Produto = await _context.Produtos
+                .Include(p => p.Usuario)
                 .Include(p => p.Categoria)
                 .Where(p => p.Nome.Contains(nome))
                 .ToListAsync();
@@ -47,6 +50,7 @@ namespace miliostore.Service.Implements
         public async Task<IEnumerable<Produto>> GetByConsole(string console)
         {
             var Produto = await _context.Produtos
+                .Include(p => p.Usuario)
                 .Include(p => p.Categoria)
                 .Where(p => p.Console
                 .Contains(console))
@@ -68,6 +72,8 @@ namespace miliostore.Service.Implements
             }
 
             produto.Categoria = produto.Categoria is not null ? _context.Categorias.FirstOrDefault(c => c.Id == produto.Categoria.Id) : null;
+            produto.Usuario = produto.Usuario is not null ? await _context.Users.FirstOrDefaultAsync(u => u.Id == produto.Usuario.Id) : null;
+
 
             await _context.Produtos.AddAsync(produto);
             await _context.SaveChangesAsync();
@@ -91,6 +97,10 @@ namespace miliostore.Service.Implements
 
             produto.Categoria = produto.Categoria is not null ? _context.Categorias
                 .FirstOrDefault(t => t.Id == produto.Categoria.Id) : null;
+
+            produto.Usuario = produto.Usuario is not null ? await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == produto.Usuario.Id) : null;
+
 
             _context.Entry(ProdutoUpdate).State = EntityState.Detached;
             _context.Entry(produto).State = EntityState.Modified;

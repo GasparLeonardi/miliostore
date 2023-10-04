@@ -33,5 +33,7 @@ namespace miliostore.Model
 
         //Chave estrangeira
         public virtual Categoria? Categoria { get; set; }
+
+        public virtual User? Usuario { get; set; }
     }
 }
