@@ -22,6 +22,9 @@ namespace miliostore.Validator
             RuleFor(u => u.Foto)
                 .MaximumLength(5000);
 
+            RuleFor(u => u.Idade)
+                .NotEmpty()
+                .InclusiveBetween(18, 100);
         }
 
     }

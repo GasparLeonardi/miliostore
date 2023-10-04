@@ -25,6 +25,10 @@ namespace miliostore.Model
         [StringLength(5000)]
         public string? Foto { get; set; } = string.Empty;
 
+        //Desafio
+        [Column(TypeName = "Int")]
+        public int Idade { get; set; }
+
         [InverseProperty("Usuario")]
         public virtual ICollection<Produto>? Produto { get; set; }
     }
